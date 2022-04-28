@@ -147,6 +147,19 @@ router.get('/api/profile', async (req, res) => {
     user:req.userSave
   })
 })
+router.put('/api/profile', async (req, res) => {
+  const userData = req.body;
+  log(userData)
+  // 1 крок(відредагувати юзера)
+  // users-масив-константа зі всіма юзерами
+  // перебрати масив і знайти юзера,який відправив запит по юзер нейм!(form)
+  // req.user.username-звідси берем імя юзера
+  //прописуємо йому нові данні які прийшли
+  // 2 крок(зберегти його в базу данних)
+  res.json({
+    ok: true,
+  })
+})
 
 
 
