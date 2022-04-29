@@ -117,19 +117,23 @@ router.post('/api/auth/login', async (req, res) => {
   }
 })
 
-router.post('/*', async (req, res, next) => {
+router.all('/*', async (req, res, next) => {
   const token = req.headers.token
-  const usersList = users.filter((user) => {
-    return user.token == token
-  })
-  if (usersList.length == 0) return res.json({
+  const user = users.find((user) => token == user.token)
+  log(123,user)
+  if (!user) return res.json({
     ok: false,
     msg: 'user dont have access'
   })
-  req.user = usersList[0]
+  req.user = user
   req.userSave = {
+    age: req.user.age,
+    phone: req.user.phone,
+    email: req.user.email,
+    facebookPage: req.user.facebookPage,
     username: req.user.username
   }
+  log(135,req.user)
   next()
 })
 
@@ -137,28 +141,45 @@ router.post('/api/test', async (req, res) => {
   const data = req.body;
   res.json({
     ok: true,
-    user:req.userSave
+    user: req.userSave
   })
 })
 
 router.get('/api/profile', async (req, res) => {
   res.json({
     ok: true,
-    user:req.userSave
+    user: req.userSave
   })
 })
 router.put('/api/profile', async (req, res) => {
   const userData = req.body;
   log(userData)
+  const token = req.headers.token
+  for (let i = 0; i < users.length; i++) {
+    if (token == users[i].token) {
+      users[i].age = userData.age
+      users[i].phone = userData.phone
+      users[i].email = userData.email
+      users[i].facebookPage = userData.facebookPage
+      const newUsersJSON = JSON.stringify(users);
+      await client.set('users', newUsersJSON);
+      return res.json({
+        ok: true,
+        msg: 'user was changed',
+      })
+    }
+  }
+  return res.json({
+    ok: false,
+    msg: 'user not found'
+  })
+
   // 1 крок(відредагувати юзера)
   // users-масив-константа зі всіма юзерами
   // перебрати масив і знайти юзера,який відправив запит по юзер нейм!(form)
   // req.user.username-звідси берем імя юзера
   //прописуємо йому нові данні які прийшли
   // 2 крок(зберегти його в базу данних)
-  res.json({
-    ok: true,
-  })
 })
 
 

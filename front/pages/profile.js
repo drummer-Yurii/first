@@ -5,9 +5,7 @@ const form = document.querySelector('#profile');
 console.log(form);
 form.addEventListener('submit', (e) => {
     e.preventDefault()
-    console.log('hello')
     const age = form.querySelector('.age').value
-    console.log(age)
     const phone = form.querySelector('.phone').value
     const email = form.querySelector('.email').value
     const facebookPage = form.querySelector('.facebookPage').value
@@ -40,6 +38,7 @@ function saveUserData(userData) {
         .then((answer) => {
             log(answer)
             if (answer.ok) {
+                location.reload()
                 // localStorage.setItem('token', answer.token)
             } else {
                 alert(answer.msg)
@@ -60,6 +59,11 @@ function getUserData() {
         .then((req) => req.json())
         .then((answer) => {
             log(answer)
+            form.querySelector('.age').value = answer.user.age
+            form.querySelector('.phone').value = answer.user.phone
+            form.querySelector('.email').value = answer.user.email
+            form.querySelector('.facebookPage').value = answer.user.facebookPage
+
             if (answer.ok) {
                 // localStorage.setItem('token', answer.token)
             } else {
